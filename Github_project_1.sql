@@ -104,5 +104,17 @@ FROM retail_sales
 GROUP BY category
 
 ---write a sql query to create each shift and number of orders( example Morning<=12, Afternoon Between 12&17, Evening >17)
-SELECT
-FROM 
+WITH sale_duration
+as (
+SELECT *,
+		CASE 
+			WHEN EXTRACT (hour FROM sale_time) < 12 THEN 'Morning'
+			WHEN EXTRACT (hour FROM sale_time) BETWEEN  12 AND 17 THEN 'Afternoon'
+			ELSE 'Evening'
+			END as Shift
+FROM retail_sales
+	)
+	SELECT Shift,
+		count(transactions_id)
+	FROM sale_duration
+	GROUP BY Shift
